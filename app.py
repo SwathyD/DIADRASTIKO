@@ -19,10 +19,13 @@ def login():
     if request.method == "POST":
         user_name = request.form["user"]
         password = request.form['pswd']
+        print(user_name)
+        print(password)
         users = mongo.db.users.find_one({'username':user_name, 'password':password})
+        print(users)
         if users:
             session['username']  = user_name
-            return redirect_url('dashboard.html', user = {'username':user_name})
+            return redirect_url('dashboard', user = {'username':user_name})
         else:
             return render_template("login.html", message="Invalid  username or password")
     else:
@@ -39,10 +42,14 @@ def signup():
             return render_template("login.html", message="Username already exists")  
         else:
             mongo.db.users.insertOne({'username':user_name, 'password':password})
-            return redirect_url('login.html', message = "Please login")
+            return redirect_url('dashboard', message = "Please login")
             
     else:
         return render_template("signup.html")
+
+@app.route("/dashboard")
+def home():
+    return render_template("dashboard.html")
 
 
 # Run Flask if the __name__ variable is equal to __main__

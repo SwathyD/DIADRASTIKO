@@ -36,14 +36,14 @@
 <div class="container-fluid">
   <div class="card">
     <div class="card-body">
-      <form>
+      <form method="POST" action="/login">
         <div class="form-group">
           <label for="Username">Username</label>
-          <input type="text" class="form-control" id="Uname" placeholder="Enter Username">
+          <input type="text" class="form-control" id="Uname" name="user" placeholder="Enter Username">
         </div>
       <div class="form-group">
         <label for="exampleInputPassword1">Password</label>
-        <input type="password" class="form-control" id="Pword" placeholder="Password">
+        <input type="password" class="form-control" id="Pword" name="pswd" placeholder="Password">
       </div>
       <button type="submit" class="btn btn-primary">Submit</button>
       </form>
