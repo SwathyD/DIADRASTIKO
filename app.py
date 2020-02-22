@@ -1,12 +1,13 @@
-from flask import Flask, request, url_for 
+from flask import Flask, request, url_for , session, redirect
 from flask import render_template
 from flask_pymongo import PyMongo
 
 # Initialize Flask
 app = Flask(__name__)
-# Define the index route
+# Define the index routediadrast
 
 app.config["MONGO_URI"] = "mongodb://192.168.43.191:27017/diadrastiko"
+app.secret_key = "this is a secret key"
 mongo = PyMongo(app)
 
 @app.route("/")
@@ -25,7 +26,7 @@ def login():
         print(users)
         if users:
             session['username']  = user_name
-            return redirect_url('dashboard', user = {'username':user_name})
+            return redirect(url_for('home'))
         else:
             return render_template("login.html", message="Invalid  username or password")
     else:
