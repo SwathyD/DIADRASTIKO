@@ -1,18 +1,20 @@
 from flask import Flask, request, url_for , session, redirect
 from flask import render_template
 from flask_pymongo import PyMongo
+import json
 
 # Initialize Flask
 app = Flask(__name__)
 # Define the index routediadrast
 
-app.config["MONGO_URI"] = "mongodb://192.168.43.191:27017/diadrastiko"
+app.config["MONGO_URI"] = "mongodb://10.120.110.61:27017/diadrastiko"
 app.secret_key = "this is a secret key"
 mongo = PyMongo(app)
 
 @app.route("/")
 def index():
-    return "Hello from Flask!"
+    logged_in ="username" in session
+    return render_template("home.html", has_logged_in = logged_in)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -40,6 +42,27 @@ def logout():
 
     return redirect(url_for('home'))
 
+@app.route("/creator")
+def creator():
+    playlist = []
+    for record in mongo.db.playlist.find():
+        if record['creator']==session['username']:
+            playlist.append({'title':record['title'], 'desc':record['desc'], 'creator':session['username'], 'id':record['_id']})
+    return render_template("creator.html", playlist = playlist)
+
+@app.route("/createPlaylist", methods=["POST"])
+def createPlaylist():
+    playlist_name = request.data.decode('utf-8')
+    mongo.db.playlist.insert_one({'title':playlist_name, 'creator':session['username']})
+    return redirect(url_for('creator'))
+
+@app.route("/insertVideo", methods=["POST"])
+def insertVideo():
+    print('hello')
+    r = json.loads(request.data)
+    mongo.db.playlist.find_one_and_update({'title':r['title']},{'$push':{'vids':{'file_name':r['filename'], 'video_name':r['videoname']}}})    
+    return "ok"
+
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
@@ -55,6 +78,10 @@ def signup():
 
     else:
         return render_template("signup.html")
+
+@app.route("/playVideo/<videoID>")
+def vid(videoID):
+    return render_template("playVideo.html",video=videoID)
 
 @app.route("/dashboard")
 def home():
