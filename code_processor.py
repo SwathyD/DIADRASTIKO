@@ -70,7 +70,7 @@ def produceResponse(src_code, absolute_file_name):
             if(ext == "c"):
                 (output, err) = runSubProcess([ "gcc", "tmp/" + absolute_file_name, "-o", "tmp/" + file_name + ".exe" ])
                 
-                if(err == None):
+                if(err != None):
                     pass
                 else:
                     (output, err) = runSubProcess([ "tmp\\"+ file_name +".exe" ])
@@ -78,7 +78,7 @@ def produceResponse(src_code, absolute_file_name):
             if(ext == "cpp"):
                 (output, err) = runSubProcess( ["g++", "tmp/" + absolute_file_name, "-o", "tmp/" + file_name + ".exe"])
                 
-                if(err == None):
+                if(err != None):
                     pass
                 else:
                     (output, err) = runSubProcess([ "tmp\\" + file_name + ".exe" ])
@@ -101,10 +101,3 @@ def produceResponse(src_code, absolute_file_name):
     response["printOrInterpret"] = printOrInterpret # "print" or "interpret" on client side
 
     return response
-
-
-print(
-
-    produceResponse("public class Test{ public static void main(String[] a){System.out.println(\"hi\");} }", "Test.java")
-
-)
