@@ -1,20 +1,31 @@
 from flask import Flask, request, url_for , session, redirect
 from flask import render_template
 from flask_pymongo import PyMongo
+<<<<<<< HEAD
 from code_processor import produceResponse
+=======
+>>>>>>> a1aef6be4c87a76d7222e693b023b918fbef5b6c
 import json
 
 # Initialize Flask
 app = Flask(__name__)
 # Define the index routediadrast
 
+<<<<<<< HEAD
 app.config["MONGO_URI"] = "mongodb://localhost:27017/diadrastiko"
+=======
+app.config["MONGO_URI"] = "mongodb://10.120.110.61:27017/diadrastiko"
+>>>>>>> a1aef6be4c87a76d7222e693b023b918fbef5b6c
 app.secret_key = "this is a secret key"
 mongo = PyMongo(app)
 
 @app.route("/")
 def index():
+<<<<<<< HEAD
     logged_in = "username" in session
+=======
+    logged_in ="username" in session
+>>>>>>> a1aef6be4c87a76d7222e693b023b918fbef5b6c
     return render_template("home.html", has_logged_in = logged_in)
 
 
@@ -92,6 +103,27 @@ def insertVideo():
 
     return str(size)
 
+@app.route("/creator")
+def creator():
+    playlist = []
+    for record in mongo.db.playlist.find():
+        if record['creator']==session['username']:
+            playlist.append({'title':record['title'], 'desc':record['desc'], 'creator':session['username'], 'id':record['_id']})
+    return render_template("creator.html", playlist = playlist)
+
+@app.route("/createPlaylist", methods=["POST"])
+def createPlaylist():
+    playlist_name = request.data.decode('utf-8')
+    mongo.db.playlist.insert_one({'title':playlist_name, 'creator':session['username']})
+    return redirect(url_for('creator'))
+
+@app.route("/insertVideo", methods=["POST"])
+def insertVideo():
+    print('hello')
+    r = json.loads(request.data)
+    mongo.db.playlist.find_one_and_update({'title':r['title']},{'$push':{'vids':{'file_name':r['filename'], 'video_name':r['videoname']}}})    
+    return "ok"
+
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
@@ -107,6 +139,15 @@ def signup():
     else:
         return render_template("signup.html")
 
+<<<<<<< HEAD
+=======
+@app.route("/playVideo/<videoID>")
+def vid(videoID):
+    return render_template("playVideo.html",video=videoID)
+
+@app.route("/dashboard")
+def home():
+>>>>>>> a1aef6be4c87a76d7222e693b023b918fbef5b6c
 
 
 
